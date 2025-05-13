@@ -6,7 +6,7 @@
 /*   By: amweyer <amweyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 11:37:37 by amweyer           #+#    #+#             */
-/*   Updated: 2025/05/13 15:48:01 by amweyer          ###   ########.fr       */
+/*   Updated: 2025/05/13 18:11:54 by amweyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 # include <string.h>
 # include <unistd.h>
 
-#ifndef BUFFER_SIZE
-#define BUFFER_SIZE 5
-#endif
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 10
+# endif
 
 size_t	ft_strlen(const char *s);
 char	*ft_strjoin(char *s1, char const *s2);
