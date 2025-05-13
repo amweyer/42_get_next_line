@@ -6,13 +6,14 @@
 /*   By: amweyer <amweyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 09:09:13 by amayaweyer        #+#    #+#             */
-/*   Updated: 2025/05/13 14:37:58 by amweyer          ###   ########.fr       */
+/*   Updated: 2025/05/13 17:44:43 by amweyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
-char	*ft_extract_line(char *buf)
+char	*ft_extract_line(char *stack)
 {
 	int		i;
 	int		len;
@@ -20,9 +21,9 @@ char	*ft_extract_line(char *buf)
 
 	i = 0;
 	len = 0;
-	while (buf[i] && buf[i] != '\n')
+	while (stack[i] && stack[i] != '\n')
 		i++;
-	if (buf[i] == '\n')
+	if (stack[i] == '\n')
 		i++;
 	len = i;
 	line = malloc((len + 1) * sizeof(char));
@@ -31,7 +32,7 @@ char	*ft_extract_line(char *buf)
 	i = 0;
 	while (i < len)
 	{
-		line[i] = buf[i];
+		line[i] = stack[i];
 		i++;
 	}
 	line[i] = '\0';
@@ -85,6 +86,11 @@ char	*ft_fill_stack(int fd, char *stack)
 		}
 		buf[r] = '\0';
 		stack = ft_strjoin(stack, buf);
+		if (!stack)
+		{
+			free(buf);
+			return (NULL);
+		}
 	}
 	free(buf);
 	return (stack);
@@ -95,7 +101,7 @@ char	*get_next_line(int fd)
 	char		*line;
 	static char	*stack;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0 || read(fd, stack, 0) < 0)
 		return (NULL);
 	if (!stack)
 	{
@@ -106,13 +112,15 @@ char	*get_next_line(int fd)
 	}
 	stack = ft_fill_stack(fd, stack);
 	if (!stack || !*stack)
+	{
+		free(stack);
+		stack = NULL;
 		return (NULL);
+	}
 	line = ft_extract_line(stack);
 	stack = ft_clean_stack(stack);
 	return (line);
 }
-
-// #include <stdio.h>
 
 // int	main(void)
 // {
@@ -122,12 +130,15 @@ char	*get_next_line(int fd)
 // 	fd = open("empty.txt", O_RDONLY);
 // 	if (fd < 0)
 // 		return (1);
-// 	printf("%s", get_next_line(fd));
-// 	while ((line = get_next_line(fd)))
-// 	{
-// 		printf("%s", line);
-// 		free(line);
-// 	}
+// 	line = get_next_line(fd);
+// 	free(line);
+// 	line = get_next_line(fd);
+// 	free(line);
+// 	// while ((line = get_next_line(100)))
+// 	// {
+// 	// 	printf("%s", line);
+// 	// 	free(line);
+// 	// }
 // 	close(fd);
 // 	return (0);
 // }
