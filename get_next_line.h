@@ -3,25 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amayaweyer <amayaweyer@student.42.fr>      +#+  +:+       +#+        */
+/*   By: amweyer <amweyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 11:37:37 by amweyer           #+#    #+#             */
-/*   Updated: 2025/05/13 08:51:29 by amayaweyer       ###   ########.fr       */
+/*   Updated: 2025/05/13 14:38:02 by amweyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h> 
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
 
-#define BUFFER_SIZE 5
+# include <fcntl.h>
+# include <stdlib.h>
+# include <string.h>
+# include <unistd.h>
 
-char *get_next_line(int fd);
-char	*ft_extract_line(char *stash);
-char	*ft_strjoin(char *s1, char const *s2);
-char	*ft_strchr(const char *s, int c);
+# define BUFFER_SIZE 5
+
 size_t	ft_strlen(const char *s);
-char *ft_clean_stash(char *stash);
+char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strchr(const char *s, int c);
 
+char	*get_next_line(int fd);
+char	*ft_extract_line(char *stash);
+char	*ft_fill_stack(int fd, char *stack);
+char	*ft_clean_stash(char *stash);
+
+#endif
