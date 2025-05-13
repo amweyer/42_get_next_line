@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amweyer <amweyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 09:09:13 by amayaweyer        #+#    #+#             */
-/*   Updated: 2025/05/13 18:29:22 by amweyer          ###   ########.fr       */
+/*   Updated: 2025/05/13 19:13:13 by amweyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_extract_line(char *stack)
 {
@@ -100,42 +100,57 @@ char	*ft_fill_stack(int fd, char *stack)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*stack;
+	static char	*stack[MAX_FD];
 
 	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-		return (free(stack), stack = NULL, NULL);
-	if (!stack)
+		return (free(stack[fd]), stack[fd] = NULL, NULL);
+	if (!stack[fd])
 	{
-		stack = malloc(1);
-		if (!stack)
+		stack[fd] = malloc(1);
+		if (!stack[fd])
 			return (NULL);
-		stack[0] = '\0';
+		stack[fd][0] = '\0';
 	}
-	stack = ft_fill_stack(fd, stack);
-	if (!stack || !*stack)
-		return (free(stack), stack = NULL, NULL);
-	line = ft_extract_line(stack);
-	stack = ft_clean_stack(stack);
+	stack[fd] = ft_fill_stack(fd, stack[fd]);
+	if (!stack[fd] || !stack[fd][0])
+		return (free(stack[fd]), stack[fd] = NULL, NULL);
+	line = ft_extract_line(stack[fd]);
+	stack[fd] = ft_clean_stack(stack[fd]);
 	return (line);
 }
 
-// #include <stdio.h>
+#include <stdio.h>
 
-// int	main(void)
-// {
-// 	int		fd = 0;
-// 	char	*line;
+int	main(void)
+{
+	char	*line;
 
-// // 	fd = open("/home/amweyer/francinette/tests/get_next_line/
-// // fsoares/read_error.txt"
-// // ,O_RDONLY);
-// 	if (fd < 0)
-// 		return (1);
-// 	while ((line = get_next_line(0)))
-// 	{
-// 		printf("%s", line);
-// 		free(line);
-// 	}
-// 	close(fd);
-// 	return (0);
-// }
+	int fd_2 = open("empty.txt",O_RDONLY);
+	int fd_1 =  open("b.txt",O_RDONLY);
+
+	if (fd_1 < 0 || fd_2 < 0)
+		return (1);
+
+	// line = get_next_line(fd_1);
+	// printf("%s", line);
+	// free(line);
+
+	line = get_next_line(0);
+	printf("%s", line);
+	free(line);
+
+	// line = get_next_line(fd_1);
+	// printf("%s", line);
+	// free(line);
+	// line = get_next_line(fd_2);
+	// printf("%s", line);
+	// free(line);
+
+	// line = get_next_line(fd_1);
+	// printf("%s", line);
+	// free(line);
+
+	// close(fd_1);
+	// close(fd_2);
+	return (0);
+}
