@@ -1,50 +1,116 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: amweyer <amweyer@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/07 11:37:34 by amweyer           #+#    #+#             */
-/*   Updated: 2025/05/07 14:07:33 by amweyer          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char *get_next_line(int fd)
+char	*ft_extract_line(char *buf)
 {
-    //size_t r;
-    size_t buff;
-    size_t end_line;
-    static char *stash;
-    static char *tmp;
-    char *line;
-    
-    
-    buff = 5;
-    end_line = 0;
-    stash = malloc(buff * sizeof(char));
-    if(!stash)
-        return(NULL);
-    line = malloc(buff * sizeof(char));
-    if(!line)
-        return(NULL);
-    while(!end_line)
-    {
-        //r = read(fd,stash,buff);
-        read(fd,stash,buff);
-        end_line = ft_strchr_cpy(stash, tmp);
-        stash = ft_strjoin(tmp, line);
-    }
-    ft_strchr()
-    
-    return()
+	int		i;
+	int		len;
+	char	*line;
 
-
+	i = 0;
+	len = 0;
+	while (buf[i] && buf[i] != '\n')
+		i++;
+	if (buf[i] == '\n')
+		i++;
+	len = i;
+	line = malloc((len + 1) * sizeof(char));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		line[i] = buf[i];
+		i++;
+	}
+	line[i] = '\0';
+	return (line);
 }
-int main()
+
+char	*ft_clean_stack(char *stack)
 {
-    int fd;
-    fd = open("text.txt", O_RDONLY);
+	char	*new_stack;
+	int		i;
+	int		j;
+
+	if (!stack)
+		return (NULL);
+	i = 0;
+	while (stack[i] && stack[i] != '\n')
+		i++;
+	if (!stack[i])
+	{
+		free(stack);
+		return (NULL);
+	}
+	new_stack = malloc(ft_strlen(stack) - i);
+	if (!new_stack)
+		return (NULL);
+	j = 0;
+	i++;
+	while (stack[i])
+		new_stack[j++] = stack[i++];
+	new_stack[j] = '\0';
+	free(stack);
+	return (new_stack);
+}
+
+char	*get_next_line(int fd)
+{
+	char		*line;
+	char		*buf;
+	static char	*stack;
+	int			r;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	buf = malloc(BUFFER_SIZE + 1);
+	if (!buf)
+		return (NULL);
+	r = 1;
+   if (!stack)
+	{
+		stack = malloc(1);
+		if (!stack)
+		{
+			free(buf);
+			return (NULL);
+		}
+		stack[0] = '\0';
+	}
+	while (!ft_strchr(stack, '\n') && r > 0)
+	{
+		r = read(fd, buf, BUFFER_SIZE);
+		if (r < 0)
+		{
+			free(buf);
+			return (NULL);
+		}
+		buf[r] = '\0';
+		stack = ft_strjoin(stack, buf);
+	}
+	free(buf);
+    if (!stack || !*stack)
+		return (NULL);
+	line = ft_extract_line(stack);
+	stack = ft_clean_stack(stack);
+	return (line);
+}
+
+int	main(void)
+{
+	int		fd;
+	char	*line;
+
+	fd = open("test1.txt", O_RDONLY);
+	if (fd < 0)
+		return (1);
+    printf("%s", get_next_line(fd));
+	while ((line = get_next_line(fd)))
+	{
+		printf("%s", line);
+		free(line);
+	}
+	close(fd);
+	return (0);
 }
