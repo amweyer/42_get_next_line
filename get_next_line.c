@@ -6,7 +6,7 @@
 /*   By: amweyer <amweyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 09:09:13 by amayaweyer        #+#    #+#             */
-/*   Updated: 2025/05/13 18:29:22 by amweyer          ###   ########.fr       */
+/*   Updated: 2025/05/14 11:29:51 by amweyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ char	*ft_fill_stack(int fd, char *stack)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*stack;
+	static char	*stack = NULL;
 
 	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (free(stack), stack = NULL, NULL);
@@ -126,12 +126,10 @@ char	*get_next_line(int fd)
 // 	int		fd = 0;
 // 	char	*line;
 
-// // 	fd = open("/home/amweyer/francinette/tests/get_next_line/
-// // fsoares/read_error.txt"
-// // ,O_RDONLY);
+// 	fd = open("empty.txt", O_RDONLY);
 // 	if (fd < 0)
 // 		return (1);
-// 	while ((line = get_next_line(0)))
+// 	while ((line = get_next_line(fd)))
 // 	{
 // 		printf("%s", line);
 // 		free(line);
